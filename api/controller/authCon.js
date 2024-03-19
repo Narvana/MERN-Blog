@@ -1,8 +1,9 @@
 const Users=require('../model/userMod')
 const bcrypt=require('bcryptjs');
+const errorHandler=require('../utils/error')
+// import errorHandler from '../utils/error' 
 
-
-const userPost=async(req,res)=>{
+const userPost=async(req,res,next )=>{
     const {username,email,password}=req.body;
     if(
         !username ||
@@ -10,9 +11,10 @@ const userPost=async(req,res)=>{
         !password ||
         username === '' ||
         email === '' ||
-        password === ''
+        password === '' 
     ){
-        return res.status(400).json({message:"All field are required"})
+        // return res.status(400).json({message:"All field are required"})
+        next(errorHandler(400,'All Fields are required'))
     }
 
     let existingUser

@@ -21,15 +21,15 @@ function Signup() {
         <form className='flex flex-col gap-2'>
           <div className=''>
           <Label className='text-lg' value='Your Username'/>
-            <TextInput/>
+            <TextInput type='text' placeholder='username' id="username"/>
           </div>
           <div className='pt-2'>
           <Label className='text-lg' value='Your Email'/>
-            <TextInput/>          
+            <TextInput type='email' placeholder='name@company.com' id="email"/>          
             </div>
           <div className='pt-2'>
           <Label className='text-lg' value='Password'/>
-            <TextInput/>
+            <TextInput type='password' placeholder='password' id="password"/>
           </div>
           <Button  gradientDuoTone='purpleToPink' outline type='submit'>Sign Up</Button>
         </form>

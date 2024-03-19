@@ -27,7 +27,7 @@ function Header() {
         <Button className='w-12 h-10 hidden sm:inline' color='gray' pill>
             <FaMoon/>
         </Button>
-        <Link to='/sign-in'>
+        <Link to='/signin'>
             <Button gradientDuoTone='purpleToBlue' outline pill>
                 Sign In
             </Button>
@@ -41,7 +41,7 @@ function Header() {
             </Link>
         </Navbar.Link>
         <Navbar.Link active={path==='/about'} as={'div'}>
-            <Link to='/About'>
+            <Link to='/about'>
                 About
             </Link>
         </Navbar.Link>

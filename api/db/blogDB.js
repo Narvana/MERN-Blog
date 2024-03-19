@@ -1,4 +1,5 @@
 const mongoose=require('mongoose')
+
 require('dotenv').config
 const uri=process.env.URI
 
@@ -7,4 +8,5 @@ then(()=>{
     console.log('Mongodb Connected');
 }).catch((error)=>{
     console.log({error});
-})
+}) 
+  

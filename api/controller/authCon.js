@@ -20,14 +20,14 @@ const userPost=async(req,res,next )=>{
     let existingUser
     try{
         existingUser=await Users.findOne({username})
-    }catch(error)
+    }catch(err)
     {
-        res.json({error}).status(500)
-        console.log(error);
+        res.status(500).json({err})
+        console.log({err});
     }
     if(existingUser){
-        console.log({message: `${username} username already exist`});
-        res.json({message: `${username} username already exist`}).status(500)
+        console.log({message:`Username ${username} already exist`});
+        res.status(500).json({message: `${username} username already exist`})
     }
     else{
         try{
@@ -36,17 +36,18 @@ const userPost=async(req,res,next )=>{
                 username,
                 email,
                 password:hashedPassword,
-            })
+            })   
             const userData=await user.save()
-            res.json({userData}).status(201)
-        }
+            // res.status(201).json({userData})
+            res.json('Signup Successful');
+        } 
         catch(error){
-            res.json({error}).status(400)
-            console.log(error);
+            res.status(400).json({error})
+            console.log({error});
         }
     }
 }
-
+ 
 module.exports={
     userPost
 }

@@ -1,6 +1,9 @@
 const Users=require('../model/userMod')
 const bcrypt=require('bcryptjs');
 const errorHandler=require('../utils/error')
+const secretKey=process.env.SECRET
+const jwt=require('jsonwebtoken')
+
 // import errorHandler from '../utils/error' 
 
 const userPost=async(req,res,next )=>{
@@ -27,7 +30,8 @@ const userPost=async(req,res,next )=>{
     }
     if(existingUser){
         console.log({message:`Username ${username} already exist`});
-        res.status(500).json({message: `${username} username already exist`})
+        next(errorHandler(500,`${username} username already exist`))
+        // res.status(500).json({message: `${username} username already exist`})
     }
     else{
         try{
@@ -42,12 +46,62 @@ const userPost=async(req,res,next )=>{
             res.json('Signup Successful');
         } 
         catch(error){
-            res.status(400).json({error})
+            next(errorHandler(500,{error}))
             console.log({error});
         }
     }
 }
  
+const userLog=async(req,res,next)=>{
+    const {username,password}=req.body;
+    if(
+        !username ||
+        !password ||
+        username === '' ||
+        password === '' 
+    ){
+        // return res.status(400).json({message:"All field are required"})
+        next(errorHandler(400,'All Fields are required'))
+    }
+    let userExist
+    try {
+        userExist=await Users.findOne({username})
+        if(!userExist)
+        {
+            console.log(`Username ${username} does not exist`)
+            next(errorHandler(401,`${username} does not exist`))
+        }
+        else
+        {
+            const checkPassword=bcrypt.compareSync(password,userExist.password)
+            if (!checkPassword) {
+                console.log(`Wrong Password, Try Again`);
+                next(errorHandler(401,`Wrong Password`))
+              } else {
+
+                const token=jwt.sign({id:userExist._id},secretKey);
+
+                const { password: pass, ...rest }=userExist._doc;
+
+                res.
+                status(200)
+                .cookie('access_token',token,{
+                    httpOnly: true,
+                })
+                .json(rest)
+
+                console.log(`Welcome to the Web's Blog ${username}`);
+                res.status(201).json(`Welcome to the Web's Blog ${username}`)
+              }
+        }
+    } catch (error) {
+        console.log(error);
+        next(errorHandler(401,{error}))
+    }
+   
+}
+
 module.exports={
-    userPost
+    userPost,
+    userLog
 }

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Label, TextInput, Button, Alert, Spinner } from 'flowbite-react'
 import { Link,useNavigate } from 'react-router-dom'
-
+import { useDispatch } from 'react-redux'
+import { signInStart ,signInSuccess ,signInFailure } from '../redux/userSlice'
 
 function Signin() {
   const [formData,setFormData]=useState({})
@@ -20,8 +21,10 @@ function Signin() {
       return setError('Please fill all the required field')
     }
     try {
-      // setLoading(true);
-      setError(null);
+      setLoading(true);
+      setError(null)
+      // dispatch(signInStart());
+
       const res=await fetch('/api/auth/signin',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
@@ -29,14 +32,21 @@ function Signin() {
       }
       )
       const data=await res.json()
-      data ? (setError(data.message)): (null)
+      // !data ? (dispatch(signInFailure(data.message))): setLoading(false)
       
-      // console.log(data);
-
-      if(res.ok) navigate('/')
-    } catch (error) {
+      if(data.success===false)
+      {
+       return setError(data.message)
+      }
       setLoading(false)
-      return setError(error) 
+
+      if(res.ok){
+        // dispatch(signInFailure(data.message))
+        navigate('/')
+      } 
+    } catch (err) {
+      setLoading(false)
+      return setError(err.message) 
     }
     }
   return (
@@ -74,7 +84,7 @@ function Signin() {
             <Spinner size='sm' />
             <span className='pl-3'>Loading...</span>
            </> : 
-           ('Sign Up')
+           ('Sign In')
           }
           </Button>
         </form> 

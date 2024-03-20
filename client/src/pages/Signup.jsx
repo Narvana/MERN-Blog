@@ -9,13 +9,14 @@ function Signup() {
   const navigate=useNavigate()
 
   const handleChange=(e)=>{
-    setFormData({...formData,[e.target.id] :e.target.value.trim()});
+    setFormData({...formData,[e.target.id] : e.target.value.trim()});
     // console.log(formData);
     // console.log(typeof formData);
   } 
 
   const handleSubmit=async(e)=>{
     e.preventDefault();
+
     if(!formData.username || !formData.email || !formData.password){
       return setError('Please fill out all fields')
     }
@@ -26,23 +27,25 @@ function Signup() {
         method:"POST",
         headers:{'Content-Type' : 'application/json'},
         body:JSON.stringify(formData),
-      })
+      });
+     
       const data=await res.json();
 
-      data? setError(data.message || data) : setLoading(false) 
+      // data? setError(data.message || data) : setLoading(false) 
+       
+      if(data.success === false){
+         return setError(data.message)
 
+      }
+      setLoading(false)
       if(res.ok) 
       {
         navigate('/signin')
       }
-      // // if(data.success === false){
-      //    setError(data.message)
-      // }
-
-    }catch(error){
-      // setError(err)
-      // console.log(err);
-      setError(error)
+    
+    }catch(err){
+      
+      setError(err.message)
       setLoading(false);
     } 
   }
@@ -93,8 +96,7 @@ function Signup() {
             error 
             &&   
             <Alert className='mt-5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-lg font-bold' color='faliure'>
-            {error}
-            
+            {error}         
             </Alert>
             /* <h1 className='text-xl bg-orange-200 rounded-sm'>{error}</h1> */
 

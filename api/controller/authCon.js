@@ -23,33 +23,34 @@ const userPost=async(req,res,next )=>{
     let existingUser
     try{
         existingUser=await Users.findOne({username})
+        if(existingUser){
+            console.log({message:`Username ${username} already exist`});
+            next(errorHandler(400,`Username ${username} already exist`))
+            // res.status(500).json({message: `${username} username already exist`})
+        }
+        else{
+            try{
+                const hashedPassword=bcrypt.hashSync(password)
+                const user=new Users({
+                    username,
+                    email,
+                    password:hashedPassword,
+                })   
+                await user.save()
+                // res.status(201).json({userData})
+                res.json('Signup Successful');
+            } 
+            catch(error){
+                next(errorHandler(error))
+                console.log({error});
+            }
+        }
     }catch(err)
     {
         res.status(500).json({err})
         console.log({err});
     }
-    if(existingUser){
-        console.log({message:`Username ${username} already exist`});
-        next(errorHandler(500,`${username} username already exist`))
-        // res.status(500).json({message: `${username} username already exist`})
-    }
-    else{
-        try{
-            const hashedPassword=bcrypt.hashSync(password)
-            const user=new Users({
-                username,
-                email,
-                password:hashedPassword,
-            })   
-            const userData=await user.save()
-            // res.status(201).json({userData})
-            res.json('Signup Successful');
-        } 
-        catch(error){
-            next(errorHandler(500,{error}))
-            console.log({error});
-        }
-    }
+    
 }
  
 const userLog=async(req,res,next)=>{
@@ -69,14 +70,14 @@ const userLog=async(req,res,next)=>{
         if(!userExist)
         {
             console.log(`Username ${username} does not exist`)
-            next(errorHandler(401,`${username} does not exist`))
+            next(errorHandler(401,` Username ${username} does not exist`))
         }
         else
         {
             const checkPassword=bcrypt.compareSync(password,userExist.password)
             if (!checkPassword) {
                 console.log(`Wrong Password, Try Again`);
-                next(errorHandler(401,`Wrong Password`))
+                next(errorHandler(401,`Wrong Password, Try Again`))
               } else {
 
                 const token=jwt.sign({id:userExist._id},secretKey);
@@ -88,15 +89,15 @@ const userLog=async(req,res,next)=>{
                 .cookie('access_token',token,{
                     httpOnly: true,
                 })
-                .json(rest)
+                .json({rest})
 
                 console.log(`Welcome to the Web's Blog ${username}`);
-                res.status(201).json(`Welcome to the Web's Blog ${username}`)
+
               }
         }
     } catch (error) {
         console.log(error);
-        next(errorHandler(401,{error}))
+        next(errorHandler(error))
     }
    
 }

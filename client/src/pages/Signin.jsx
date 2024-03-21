@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import { Label, TextInput, Button, Alert, Spinner } from 'flowbite-react'
 import { Link,useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { signInStart ,signInSuccess ,signInFailure } from '../redux/userSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { signInStart ,signInSuccess ,signInFailure } from '../redux/user/userSlice'
 
 function Signin() {
-  const [formData,setFormData]=useState({})
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [formData,setFormData]=useState({});
+  // const [error, setError] = useState(null)
+  const { loading,error:errorMessage}=useSelector((state) => state.user);
 
-  const navigate=useNavigate()
+  const dispatch=useDispatch();
+
+  const navigate=useNavigate();
 
   const handleChange=(e)=>{
     setFormData({...formData,[e.target.id] : e.target.value.trim()})
@@ -18,35 +20,35 @@ function Signin() {
     e.preventDefault()
     if(!formData.username || !formData.password)
     {
-      return setError('Please fill all the required field')
+      return dispatch(signInFailure('Please fill all the required field'))
     }
     try {
-      setLoading(true);
-      setError(null)
-      // dispatch(signInStart());
+      // setLoading(true);
+      // setError(null)
+      
+      dispatch(signInStart());
 
       const res=await fetch('/api/auth/signin',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify(formData)
-      }
-      )
+      });
+
       const data=await res.json()
-      // !data ? (dispatch(signInFailure(data.message))): setLoading(false)
-      
+            
       if(data.success===false)
       {
-       return setError(data.message)
+        dispatch(signInFailure(data.message));
       }
-      setLoading(false)
+      // setLoading(false)
 
       if(res.ok){
-        // dispatch(signInFailure(data.message))
+        dispatch(signInSuccess(data))
         navigate('/')
       } 
     } catch (err) {
-      setLoading(false)
-      return setError(err.message) 
+      // dispatch(signInFailure(err.message))
+      console.log(err.message);
     }
     }
   return (
@@ -84,7 +86,7 @@ function Signin() {
             <Spinner size='sm' />
             <span className='pl-3'>Loading...</span>
            </> : 
-           ('Sign In')
+           'Sign In'
           }
           </Button>
         </form> 
@@ -93,11 +95,11 @@ function Signin() {
           <Link to='/signup' className='text-blue-500 hover:text-blue-700 hover:font-semibold'> Sign Up</Link></h3>
         </div>
          {
-            error 
+            errorMessage 
             &&   
             <Alert className='mt-5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-lg font-bold' color='faliure'>
             
-            {error}
+            {errorMessage}
             
             </Alert>
             /* <h1 className='text-xl bg-orange-200 rounded-sm'>{error}</h1> */

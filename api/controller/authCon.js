@@ -54,6 +54,7 @@ const userPost=async(req,res,next )=>{
 }
  
 const userLog=async(req,res,next)=>{
+    // const {}=id
     const {username,password}=req.body;
     if(
         !username ||
@@ -66,7 +67,7 @@ const userLog=async(req,res,next)=>{
     }
     let userExist
     try {
-        userExist=await Users.findOne({username})
+        userExist=await Users.findOne({username} || {email})
         if(!userExist)
         {
             console.log(`Username ${username} does not exist`)

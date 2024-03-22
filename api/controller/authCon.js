@@ -55,23 +55,25 @@ const userPost=async(req,res,next )=>{
  
 const userLog=async(req,res,next)=>{
     // const {}=id
-    const {username,password}=req.body;
+
+    const {email,password}=req.body;
+    
     if(
-        !username ||
+        !email ||
         !password ||
-        username === '' ||
+        email === '' ||
         password === '' 
     ){
         // return res.status(400).json({message:"All field are required"})
-        next(errorHandler(400,'All Fields are required'))
-    }
+        next(errorHandler(400,'All Fields are required')) 
+    } 
     let userExist
     try {
-        userExist=await Users.findOne({username} || {email})
+        userExist=await Users.findOne({email})
         if(!userExist)
         {
-            console.log(`Username ${username} does not exist`)
-            next(errorHandler(401,` Username ${username} does not exist`))
+            console.log(`email ${email} does not exist`)
+            next(errorHandler(401,` email ${email} does not exist`))
         }
         else
         {
@@ -84,16 +86,14 @@ const userLog=async(req,res,next)=>{
                 const token=jwt.sign({id:userExist._id},secretKey);
 
                 const { password: pass, ...rest }=userExist._doc;
-
-                res.
-                status(200)
+                console.log(userExist._doc);
+                res
+                .status(200)
                 .cookie('access_token',token,{
                     httpOnly: true,
                 })
                 .json({rest})
-
-                console.log(`Welcome to the Web's Blog ${username}`);
-
+                console.log(`Welcome to the Web's Blog ${rest.username}`,rest);
               }
         }
     } catch (error) {
@@ -103,7 +103,46 @@ const userLog=async(req,res,next)=>{
    
 }
 
+const google=async(req,res,next)=>{
+    const {email,name, googlePhotoUrl}=req.body;
+    try {
+        const user=await Users.findOne({email});
+        if(user){
+            const token=jwt.sign(
+                {id:user._id},secretKey);
+            const {password, ...rest}= user._doc;
+            res
+            .status(200)
+            .cookie('access_token',token,{
+                httpOnly: true,
+            }).json(rest);
+        } else{
+            const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const hashedPassword=bcrypt.hashSync(generatePassword,10);
+            const newUser = new Users({
+                username: name.toLowerCase().split(' ').join('')+ Math.random().toString(9).slice(-4),
+                email,
+                password: hashedPassword,
+                profilePicture: googlePhotoUrl
+            });
+            await newUser.save();
+            const token=jwt.sign({id:newUser._id},secretKey);
+            const {password, ...rest}=newUser._doc;
+            res
+             .status(200)
+             .cookie('access_token', token, {
+                httpOnly:true,
+             })
+             .json({rest});
+        }
+    } catch (error) {
+        console.log({error});
+        next(errorHandler(error))
+    }    
+}
+
 module.exports={
     userPost,
-    userLog
+    userLog,
+    google,
 }

@@ -3,6 +3,7 @@ import { Label, TextInput, Button, Alert, Spinner } from 'flowbite-react'
 import { Link,useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { signInStart ,signInSuccess ,signInFailure } from '../redux/user/userSlice'
+import OAuth from '../component/OAuth'
 
 function Signin() {
   const [formData,setFormData]=useState({});
@@ -18,7 +19,7 @@ function Signin() {
   }
   const handleSubmit=async(e)=>{
     e.preventDefault()
-    if(!formData.username || !formData.password)
+    if(!formData.email || !formData.password)
     {
       return dispatch(signInFailure('Please fill all the required field'))
     }
@@ -40,14 +41,16 @@ function Signin() {
       {
         dispatch(signInFailure(data.message));
       }
+
       // setLoading(false)
 
       if(res.ok){
         dispatch(signInSuccess(data))
         navigate('/')
+
       } 
     } catch (err) {
-      // dispatch(signInFailure(err.message))
+      dispatch(signInFailure(err.message))
       console.log(err.message);
     }
     }
@@ -68,8 +71,8 @@ function Signin() {
       <div className='flex-1'>
         <form className='flex flex-col gap-2' onSubmit={handleSubmit}>
           <div className=''>
-          <Label className='text-lg' value='Your Username'/>
-            <TextInput type='text' placeholder='Username' id="username" onChange={handleChange}/>
+          <Label className='text-lg' value='Your Email'/>
+            <TextInput type='text' placeholder='Email' id="email" onChange={handleChange}/>
           </div>
           {/* <div className='pt-2'>
           <Label className='text-lg' value='Your Email'/>
@@ -89,6 +92,7 @@ function Signin() {
            'Sign In'
           }
           </Button>
+          <OAuth />
         </form> 
         <div>
           <h3 className='pt-2'>Don't Have an Account? 
@@ -103,7 +107,6 @@ function Signin() {
             
             </Alert>
             /* <h1 className='text-xl bg-orange-200 rounded-sm'>{error}</h1> */
-
          }
       </div>
     </div>
@@ -112,5 +115,7 @@ function Signin() {
 
   )
 }
+
+
 
 export default Signin

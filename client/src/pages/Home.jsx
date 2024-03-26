@@ -10,7 +10,8 @@ function Home() {
   console.log(currentUser);
   return (
     <div>
-      Welcome to the Web's Blog {currentUser && <div>{currentUser.rest.username}</div>}
+    <span>Welcome to the Web's Blog {currentUser && <>{currentUser.username}</>}</span>
+      
     </div>
   )
 }

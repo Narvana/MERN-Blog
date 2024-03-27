@@ -5,9 +5,9 @@ import {HiUser, HiArrowSmRight} from 'react-icons/hi'
 
 function DashSidebar() {
   return (
-    <Sidebar>
-        <Sidebar.Items>
-            <Sidebar.ItemGroup>
+    <Sidebar className='w-full md:w-56'>
+        <Sidebar.Items> 
+            <Sidebar.ItemGroup className='flex flex-col gap-1'>
                 <Sidebar.Item active icon={HiUser} label={'User'} labelColor='dark'>
                     Profile
                 </Sidebar.Item>

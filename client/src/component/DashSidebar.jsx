@@ -8,7 +8,7 @@ function DashSidebar() {
     <Sidebar className='w-full md:w-56'>
         <Sidebar.Items> 
             <Sidebar.ItemGroup className='flex flex-col gap-1'>
-                <Sidebar.Item active icon={HiUser} label={'User'} labelColor='dark'>
+                <Sidebar.Item active icon={HiUser} label={'User'} labelColor='dark' as='div'>
                     Profile
                 </Sidebar.Item>
                 <Sidebar.Item active icon={HiArrowSmRight} className='cursor-pointer'>

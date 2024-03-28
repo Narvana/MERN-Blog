@@ -11,7 +11,7 @@ function Header() {
     const dispatch=useDispatch()
     
     const {currentUser} = useSelector((state)=>state.user)
-    console.log(currentUser);
+    // console.log(currentUser);
     const { theme } = useSelector((state)=>state.theme)
     
     const handleSignout=async()=>{

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef,useState } from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {updateStart,updateFailure,updateSuccess,deleteStart,deleteFailure,deleteSuccess,
+import {updateStart,updateFailure,updateSuccess,deleteStart,deleteFailure,deleteSuccess,signoutSuccess
 } from '../redux/user/userSlice'
 import { Alert,TextInput, Button,  Modal, ModalBody, } from 'flowbite-react'
 
@@ -158,7 +158,7 @@ function DashProfile() {
       setUpdateUserError(error.message)
     }
 
-  }
+  };
   // console.log({formData});
 
   const handleDelete=async()=>{
@@ -181,6 +181,24 @@ function DashProfile() {
     }
   };
 
+  const handleSignOut=async()=>{
+    try {
+      const res=await fetch('/api/user/signout',{
+        method: 'POST',
+      });
+      const data= await res.json();
+      if(!res.ok)
+      {
+        console.log(data.message);
+      }
+      else{
+        dispatch(signoutSuccess());
+        navigate('/signin')
+      }
+    } catch (error) {
+      console.log(error.message);      
+    }
+  };
 
 
   return (
@@ -276,7 +294,9 @@ function DashProfile() {
       >
       Delete Account
       </span>
-      <span  className='cursor-pointer font-semibold hover:text-purple-500 hover:font-bold'
+      <span  
+       className='cursor-pointer font-semibold hover:text-purple-500 hover:font-bold'
+       onClick={handleSignOut}
       >Sign Out</span>
      </div> 
 

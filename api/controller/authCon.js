@@ -68,7 +68,7 @@ const userLog=async(req,res,next)=>{
         next(errorHandler(400,'All Fields are required')) 
     } 
     let userExist
-    try {
+    try { 
         userExist=await Users.findOne({email})
         if(!userExist)
         {
@@ -92,7 +92,7 @@ const userLog=async(req,res,next)=>{
                 .cookie('access_token',token,{
                     httpOnly: true,
                 })
-                .json({rest})
+                .json(rest)
                 console.log(`Welcome to the Web's Blog ${rest.username}`,rest);
               }
         }
@@ -116,6 +116,7 @@ const google=async(req,res,next)=>{
             .cookie('access_token',token,{
                 httpOnly: true,
             }).json(rest);
+            
         } else{
             const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
             const hashedPassword=bcrypt.hashSync(generatePassword,10);
@@ -133,7 +134,7 @@ const google=async(req,res,next)=>{
              .cookie('access_token', token, {
                 httpOnly:true,
              })
-             .json({rest});
+             .json(rest);
         }
     } catch (error) {
         console.log({error});

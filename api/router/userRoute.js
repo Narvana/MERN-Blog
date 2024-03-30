@@ -8,5 +8,6 @@ const verifyToken=require('../utils/verifyUsers')
 // const 
 router.put('/update/:userId',verifyToken.verify,userCon.userUpdate)
 router.delete('/delete/:userId',verifyToken.verify,userCon.userDelete)
+router.post('/signout',verifyToken.verify,userCon.userSignout)
 
 module.exports=router

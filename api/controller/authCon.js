@@ -46,7 +46,7 @@ const userPost=async(req,res,next )=>{
             }
         }
     }catch(err)
-    {
+    {   
         res.status(500).json({err})
         console.log({err});
     }
@@ -83,7 +83,7 @@ const userLog=async(req,res,next)=>{
                 next(errorHandler(401,`Wrong Password, Try Again`))
               } else {
 
-                const token=jwt.sign({id:userExist._id},secretKey);
+                const token=jwt.sign({id:userExist._id, isAdmin:userExist.isAdmin},secretKey);
 
                 const { password: pass, ...rest }=userExist._doc;
                 console.log(userExist._doc);
@@ -109,7 +109,7 @@ const google=async(req,res,next)=>{
         const user=await Users.findOne({email});
         if(user){
             const token=jwt.sign(
-                {id:user._id},secretKey);
+                {id:user._id, isAdmin:user.isAdmin},secretKey);
             const {password, ...rest}= user._doc;
             res
             .status(200)
